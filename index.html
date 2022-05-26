@@ -140,7 +140,9 @@
         for await (const file of files) {
             const existingPdfBytes = await file.arrayBuffer()
             // Load a PDFDocument from the existing PDF bytes
-            const pdfDoc = await PDFDocument.load(existingPdfBytes)
+            const pdfDoc = await PDFDocument.load(existingPdfBytes, {
+                ignoreEncryption: true
+            })
             // Get the first page of the document
             const pages = pdfDoc.getPages()
             //pages foreach
