@@ -1,179 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF to A4 Format Converter</title>
-    <meta name="author" content="Augustyn Głowacki">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"
-        integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta name="author" content="Augustyn Głowacki" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"
+      integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="https://unpkg.com/downloadjs@1.4.7"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"
-        integrity="sha512-amNoSoOK3jIKx6qlDrv36P4M/h7vc6CHwiBU3XG9/1LW0ZSNe8E3iZL1tPG/VnfCrVrZc2Zv47FIJ7fyDX4DMA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"
+      integrity="sha512-amNoSoOK3jIKx6qlDrv36P4M/h7vc6CHwiBU3XG9/1LW0ZSNe8E3iZL1tPG/VnfCrVrZc2Zv47FIJ7fyDX4DMA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
     <style>
-        #app {
-            margin: 0 auto;
-            max-width: 600px;
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-        }
+      body {
+        background: #058fa7;
+        color: #f5f5f5;
+      }
+      .upload-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        margin: 0 auto;
+      }
+      button#reset {
+        /* white reset icon as bacground */
+        flex-shrink: 0;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjFweCIgaGVpZ2h0PSIyMXB4IiB2aWV3Qm94PSIwIDAgMjEgMjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IndoaXRlIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHRyYW5zZm9ybT0ibWF0cml4KDAgMSAxIDAgMi41IDIuNSkiPjxwYXRoIGQ9Im0zLjk4NjUyMzc2IDEuMDc4MDcwNjhjLTIuMzgzNzcxNzkgMS4zODUxNDU1Ni0zLjk4NjUyMzc2IDMuOTY2MzY2MDUtMy45ODY1MjM3NiA2LjkyMTkyOTMyIDAgNC40MTgyNzggMy41ODE3MjIgOCA4IDhzOC0zLjU4MTcyMiA4LTgtMy41ODE3MjItOC04LTgiLz48cGF0aCBkPSJtNCAxdjRoLTQiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIC0xIDAgNikiLz48L2c+PC9zdmc+);
+        background-size: 70%;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        margin: 0 0 0 10px;
+        cursor: pointer;
+        box-sizing: border-box;
+      }
+      #app {
+        margin: 0 auto;
+        max-width: 600px;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, Arimo, sans-serif;
+        text-align: center;
+      }
+      /* style a nice button */
+      button#download {
+        margin-top: 36px;
+        max-width: 330px;
+        max-height: 60px;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.2);
+        color: #f5f5f5;
+        font-size: 20px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: 0.3s ease-in-out;
+      }
+      /* style progress bar on all browsers */
+      progress {
+        width: 100%;
+        height: 20px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.02);
+        color: #017026;
+        font-size: 20px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: 0.3s ease-in-out;
+      }
+      progress::-webkit-progress-bar {
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 5px;
+      }
+      progress::-webkit-progress-value {
+        background-color: #017026;
+        border-radius: 5px;
+      }
+      progress::-moz-progress-bar {
+        background-color: #017026;
+        border-radius: 5px;
+      }
 
-        /* style a nice button */
-        button {
-            margin-top: 36px;
-            max-width: 320px;
-            max-height: 60px;
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 5px;
-            background-color: blue;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
+      button {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      button:hover {
+        background: rgba(0, 0, 0, 0.4);
+      }
+      .custom-file-upload {
+        box-sizing: border-box;
+        border: 1px solid #f5f5f5;
+        display: inline-block;
+        max-width: auto;
+        border-radius: 5px;
+        width: auto;
+        padding: 0 8px;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        margin-bottom: 0px;
+        font-size: 20px;
+        font-weight: 400;
+      }
+      h2 {
+        margin-bottom: 48px;
+        font-size: 13px;
+        font-weight: 400;
+      }
+      @media screen and (max-width: 370px) {
         .custom-file-upload {
-            box-sizing: border-box;
-            border: 5px solid blue;
-            display: inline-block;
-            max-width: auto;
-            min-width: 320px;
-            max-height: 60px;
-            padding: 0px 8px;
-            width: auto;
-            height: 100%;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+          padding: 0 2px;
         }
-
-        button#upload-button {
-            background-color: lightseagreen;
+        button#reset {
+          width: 40px;
+          height: 40px;
+          margin: 0 0 0 4px;
         }
-
+        button#download {
+          max-width: 304px;
+        }
+      }
+      @media screen and (min-width: 600px) {
         h1 {
-            margin-bottom: 0px;
-            font-size: 20px
+          font-size: 32px;
         }
-
         h2 {
-            margin-bottom: 48px;
-            font-size: 13px;
+          font-size: 20px;
         }
-
-        @media screen and (min-width:600px) {
-            h1 {
-
-                font-size: 32px
-            }
-
-            h2 {
-
-                font-size: 24px;
-            }
-        }
+      }
     </style>
-</head>
-
-<body>
+  </head>
+  <body>
     <div id="app">
-        <h1>Wprowadź jeden lub więcej pdfów</h1>
-        <h2>Twoja przeglądarka pobierze pliki w formacie A4</h2>
+      <h1>Wprowadź jeden lub więcej pdfów</h1>
+      <h2>Twoja przeglądarka pobierze pliki w formacie A4</h2>
+      <div class="upload-container">
         <label class="custom-file-upload">
-            <input id="fileupload" type="file" name="fileupload" multiple />
+          <input id="fileupload" type="file" name="fileupload" multiple />
         </label>
-        <button id="download">Pobierz</button>
+        <button id="reset" type="button" onclick="reset()"></button>
+      </div>
+      <progress id="progress" value="0" max="100" style="width: 320px; margin-top: 36px; display: none"></progress>
+      <button id="download">Pobierz</button>
     </div>
-</body>
-<script>
-    const {
-        degrees,
-        PDFDocument,
-        rgb,
-        StandardFonts
-    } = PDFLib
-
-    //add event listener click for download button
-
-
+  </body>
+  <script>
+    const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib;
+    const progressBar = document.getElementById("progress");
     const modifyPdf = async () => {
-        if (!fileupload.files) return null;
-        //one pdf downloads instead of a zip
-        // if (fileupload.files.length === 1) {
-        //     const existingPdfBytes = await fileupload.files[0].arrayBuffer()
-        //     // Load a PDFDocument from the existing PDF bytes
-        //     const pdfDoc = await PDFDocument.load(existingPdfBytes)
-        //     // Get the first page of the document
-        //     const pages = pdfDoc.getPages()
-        //     //pages foreach
-        //     pages.forEach(page => {
-        //         const {
-        //             width,
-        //             height
-        //         } = page.getSize()
-        //         //change format of the pdf to A4
-        //         const uploadedRatio = width / height
-        //         page.scale(uploadedRatio * 842 / width, 842 / height)
-        //         page.setSize(595, 842)
-        //     })
-        //     // Serialize the PDFDocument to bytes (a Uint8Array)
-        //     const pdfBytes = await pdfDoc.save()
-        //     download(pdfBytes, "invoice.pdf", "application/pdf", true);
-        //     return;
-        // }
+      if (!fileupload.files) return null;
+      const files = [...fileupload.files];
+      const resultArray = [];
+      const loading = [];
+      //for await with index
+      for (let i = 0; i < files.length; i++) {
+        loading.push("loading");
+      }
+      progressBar.max = loading.length;
+      progressBar.value = 0;
+      progressBar.style.display = "block";
+      let i = 0;
 
-        const files = [...fileupload.files];
-        const resultArray = [];
-        for await (const file of files) {
-            const existingPdfBytes = await file.arrayBuffer()
-            // Load a PDFDocument from the existing PDF bytes
-            const pdfDoc = await PDFDocument.load(existingPdfBytes, {
-                ignoreEncryption: true
-            })
-            // Get the first page of the document
-            const pages = pdfDoc.getPages()
-            //pages foreach
-            pages.forEach(page => {
-                const {
-                    width,
-                    height
-                } = page.getSize()
-                //change format of the pdf to A4
-                const uploadedRatio = width / height
-                page.scale(uploadedRatio * 842 / width, 842 / height)
-                page.setSize(595, 842)
-            })
-            // Serialize the PDFDocument to bytes (a Uint8Array)
-            const pdfBytes = await pdfDoc.save()
-            resultArray.push(pdfBytes)
-        }
-        const zip = new JSZip();
-        resultArray.forEach((pdf, index) => {
-            zip.file(`invoice${index}.pdf`, pdf);
-        })
-        zip.generateAsync({
-                type: "blob"
-            })
-            .then(function (content) {
+      for await (const file of files) {
+        const existingPdfBytes = await file.arrayBuffer();
 
-                saveAs(content, "invoices.zip");
+        const loadPDFs = async () => {
+          try {
+            return await PDFDocument.load(existingPdfBytes, {
+              ignoreEncryption: true,
             });
-    }
-    const button = document.querySelector('#download')
-    button.addEventListener('click', modifyPdf)
-</script>
+          } catch (e) {   
+            progressBar.value = 0;
+            progressBar.style.display = "hidden";
+            alert(`Nie można otworzyć pliku! Plik ${file.name} jest uszkodzony!`);
+            return;
+          }
+        };
+        const pdfDoc = await loadPDFs();
+        if (!pdfDoc) return;
+        loading[i] = "loaded";
+        progressBar.value = loading.filter((x) => x === "loaded").length;
+        i++;
 
+        // Get the first page of the document
+        const pages = pdfDoc.getPages();
+        //pages foreach
+        pages.forEach((page) => {
+          const { width, height } = page.getSize();
+          //change format of the pdf to A4
+          const uploadedRatio = width / height;
+          page.scale((uploadedRatio * 842) / width, 842 / height);
+          page.setSize(595, 842);
+        });
+        // Serialize the PDFDocument to bytes (a Uint8Array)
+        const pdfBytes = await pdfDoc.save();
+        resultArray.push(pdfBytes);
+      }
+
+      const zip = new JSZip();
+      resultArray.forEach((pdf, index) => {
+        zip.file(`invoice${index}.pdf`, pdf);
+      });
+      zip
+        .generateAsync({
+          type: "blob",
+        })
+        .then(function (content) {
+          saveAs(content, "invoices.zip");
+        });
+    };
+    const button = document.querySelector("#download");
+    button.addEventListener("click", modifyPdf);
+    const reset = () => {
+      fileupload.value = null;
+    };
+  </script>
 </html>
