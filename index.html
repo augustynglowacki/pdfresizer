@@ -177,6 +177,7 @@
       if (!fileupload.files) return null;
       const files = [...fileupload.files];
       const resultArray = [];
+      const namesArray = [];
       const loading = [];
       //for await with index
       for (let i = 0; i < files.length; i++) {
@@ -220,12 +221,15 @@
         });
         // Serialize the PDFDocument to bytes (a Uint8Array)
         const pdfBytes = await pdfDoc.save();
+        const pdfName = pdfDoc ? file.name : "invoice";
         resultArray.push(pdfBytes);
+        namesArray.push(pdfName)
       }
 
       const zip = new JSZip();
       resultArray.forEach((pdf, index) => {
-        zip.file(`invoice${index}.pdf`, pdf);
+        console.log(pdf)
+        zip.file(`${!!namesArray[index] ? namesArray[index]: 'invoice' + index}`, pdf);
       });
       zip
         .generateAsync({
